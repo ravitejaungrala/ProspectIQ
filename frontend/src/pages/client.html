@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhanadurga Storyboard Layout</title>
+<style>
+  :root {
+    --bg-main: #F1F5F9;
+    --card-bg: #FFFFFF;
+    --border-color: #CBD5E1;
+    --text-main: #0F172A;
+    --text-muted: #475569;
+    
+    /* Panel Identity Themes */
+    --red-brand: #EF4444;
+    --red-bg: #FEF2F2;
+    --red-text: #991B1B;
+    
+    --emerald-brand: #10B981;
+    --emerald-bg: #F0FDF4;
+    --emerald-text: #047857;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { background: var(--bg-main); color: var(--text-main); padding: 30px 16px; display: flex; justify-content: center; }
+  
+  .comic-container { max-width: 950px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  
+  /* Individual Quad Panel */
+  .panel { background: var(--card-bg); border: 3px solid var(--text-main); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; min-height: 340px; box-shadow: 6px 6px 0px #0F172A; }
+  
+  /* Panel Header / Scene Labels */
+  .scene-tag { padding: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; border-bottom: 3px solid var(--text-main); }
+  .panel-left .scene-tag { background: #FFE4E6; color: var(--red-text); }
+  .panel-right .scene-tag { background: #D1FAE5; color: var(--emerald-text); }
+  
+  .panel-body { padding: 24px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+  /* Character Avatar Simulator Boxes */
+  .character-profile { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .avatar-circle { width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+  
+  .panel-left .avatar-circle { background: #FCA5A5; }
+  .panel-right .avatar-circle { background: #6EE7B7; }
+  
+  .char-meta { display: flex; flex-direction: column; }
+  .char-name { font-size: 14px; font-weight: 800; color: var(--text-main); }
+  .char-role { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+
+  /* Comic Dialog Speech Bubbles */
+  .speech-bubble { background: #FFFFFF; border: 2.5px solid var(--text-main); border-radius: 14px; padding: 16px; position: relative; margin-bottom: 16px; box-shadow: 3px 3px 0px rgba(0,0,0,0.05); }
+  .speech-bubble::after { content: ''; position: absolute; bottom: -12px; left: 30px; border-width: 12px 12px 0 0; border-style: solid; border-color: var(--text-main) transparent; display: block; width: 0; }
+  .speech-bubble p { font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text-main); }
+
+  /* Bottom Outcome Description Banner */
+  .outcome-banner { border-top: 2.5px dashed var(--border-color); padding-top: 14px; }
+  .outcome-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .panel-left .outcome-title { color: var(--red-brand); }
+  .panel-right .outcome-title { color: var(--emerald-brand); }
+  
+  .outcome-text { font-size: 12px; font-weight: 500; color: var(--text-muted); line-height: 1.4; }
+  .outcome-text b { color: var(--text-main); }
+
+</style>
+</head>
+<body>
+
+<div class="comic-container">
+
+  <div class="panel panel-left">
+    <div class="scene-tag">Scene 1: The Manual Hustle</div>
+    <div class="panel-body">
+      
+      <div class="character-profile">
+        <div class="avatar-circle">😫</div>
+        <div class="char-meta">
+          <span class="char-name">Overwhelmed Admin</span>
+          <span class="char-role">Manual HR Operations</span>
+        </div>
+      </div>
+      
+      <div class="speech-bubble">
+        <p>"I reject this setup! I'm burning hours tracking down proxy clock-ins, cross-checking spreadsheets, and manually writing out employment contracts."</p>
+      </div>
+      
+      <div class="outcome-banner">
+        <div class="outcome-title">The Bottleneck</div>
+        <div class="outcome-text">Administrative operational growth is completely choked by <b>manual infrastructure data debt</b>.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-right">
+    <div class="scene-tag">Scene 2: Entering Dhanadurga</div>
+    <div class="panel-body">
+      
+      <div class="character-profile">
+        <div class="avatar-circle">🤖</div>
+        <div class="char-meta">
+          <span class="char-name">The Visionary Founder</span>
+          <span class="char-role">Autonomous Architect</span>
+        </div>
+      </div>
+      
+      <div class="speech-bubble">
+        <p>"Say yes to automated scale. We integrated biometric liveness checks to stop fraud and deployed twin AI core agents to run workflows entirely on autopilot!"</p>
+      </div>
+      
+      <div class="outcome-banner">
+        <div class="outcome-title">The Architecture Innovation</div>
+        <div class="outcome-text"><b>Dhanadurga HRMS</b> shifts core operations from human triage models directly into cloud serverless systems.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-left">
+    <div class="scene-tag">Scene 3: The Legacy Threat</div>
+    <div class="panel-body">
+      
+      <div class="character-profile">
+        <div class="avatar-circle">📉</div>
+        <div class="char-meta">
+          <span class="char-name">Traditional SME Business</span>
+          <span class="char-role">Stuck in Legacy Systems</span>
+        </div>
+      </div>
+      
+      <div class="speech-bubble">
+        <p>"No automated processing means we can't scale across multiple offices without hiring a massive manual oversight crew..."</p>
+      </div>
+      
+      <div class="outcome-banner">
+        <div class="outcome-title">The Loss Lifecycle</div>
+        <div class="outcome-text">Vulnerability to identity spoofing, broken tracking audits, and <b>heavy monthly subscription overheads</b>.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel panel-right">
+    <div class="scene-tag">Scene 4: Absolute Modern Growth</div>
+    <div class="panel-body">
+      
+      <div class="character-profile">
+        <div class="avatar-circle">🚀</div>
+        <div class="char-meta">
+          <span class="char-name">The Scaling CEO</span>
+          <span class="char-role">Platform Leveraged Business</span>
+        </div>
+      </div>
+      
+      <div class="speech-bubble">
+        <p>"With serverless multi-tenant isolation, we scale across distinct branches globally on a single zero-maintenance framework!"</p>
+      </div>
+      
+      <div class="outcome-banner">
+        <div class="outcome-title">The Scaled State</div>
+        <div class="outcome-text">Complete <b>workflow isolation</b>, zero physical management load, and data-driven scaling.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

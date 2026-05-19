@@ -1,0 +1,583 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0edf8;font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;padding:24px 16px}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* PICKER */
+.picker{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:900px;margin:0 auto 32px}
+.pick-card{background:#fff;border:2px solid #e8e2f5;border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .18s;text-align:center}
+.pick-card:hover{border-color:#7c3aed;transform:translateY(-2px)}
+.pick-card.active{border-color:#7c3aed;background:#faf7ff}
+.pick-icon{font-size:22px;margin-bottom:6px}
+.pick-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:3px}
+.pick-sub{font-size:11px;color:#9ca3af}
+
+/* TEMPLATE CONTAINER */
+.tpl-wrap{display:none;max-width:640px;margin:0 auto}
+.tpl-wrap.active{display:block}
+
+/* EMAIL SHELL */
+.shell{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e8e2f5;margin-bottom:32px}
+
+/* HEADER */
+.eh{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid #f0eaf9}
+.elogo{display:flex;align-items:center;gap:9px}
+.emark{width:28px;height:28px;background:#7c3aed;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+.ename{font-size:14px;font-weight:700;color:#1a1a2e;letter-spacing:-.3px}
+.esub{font-size:9px;color:#b0a3d4;text-transform:uppercase;letter-spacing:1.2px}
+.efor{font-size:11px;color:#b0a3d4}.efor b{color:#7c3aed}
+
+/* HERO */
+.hero{padding:32px 28px 22px}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#ec4899;margin-bottom:10px}
+.hero h1{font-size:26px;line-height:1.22;font-weight:700;color:#1a1a2e;margin-bottom:10px;font-family:Georgia,serif}
+.hero h1 .vp{color:#7c3aed}.hero h1 .vb{color:#2563eb}.hero h1 .vpk{color:#ec4899}
+.hero p{font-size:13px;color:#6b7280;line-height:1.68}
+
+/* PERSONAL NOTE */
+.pnote{margin:0 28px 20px;background:#faf7ff;border-left:3px solid #7c3aed;border-radius:0 8px 8px 0;padding:18px 20px}
+.pnote-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7c3aed;margin-bottom:8px}
+.pnote-badge{display:inline-block;background:#1a1a2e;color:#fff;padding:2px 9px;border-radius:4px;font-size:10px;margin-bottom:8px}
+.pnote blockquote{font-style:italic;font-size:13px;line-height:1.7;color:#374151}
+.pnote .sig{margin-top:8px;font-size:11px;color:#b0a3d4}
+
+/* SECTION */
+.sec{padding:22px 28px;border-top:1px solid #f0eaf9}
+.sec-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a3d4;margin-bottom:6px}
+.sec h2{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:8px;font-family:Georgia,serif}
+.sec p{font-size:13px;color:#4b5563;line-height:1.7;margin-bottom:8px}
+
+/* STATS */
+.stats{display:flex;border:1px solid #ede9f9;border-radius:10px;overflow:hidden;margin:0 28px 18px}
+.stat{flex:1;padding:14px 8px;text-align:center;background:#faf7ff;border-right:1px solid #ede9f9}
+.stat:last-child{border-right:none}
+.sv{font-size:20px;font-weight:700}.sl{font-size:9px;color:#9ca3af;text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.cp{color:#7c3aed}.cb{color:#2563eb}.cpk{color:#ec4899}
+
+/* ROI BOX */
+.roi{background:#1a1a2e;padding:22px 28px;color:#fff}
+.roi-lbl{font-size:9px;color:#6b7280;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.roi-g{display:flex}
+.ri{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.12)}
+.ri:last-child{border-right:none}
+.rn{font-size:24px;font-weight:800}.rd{font-size:10px;color:#9ca3af;margin-top:2px}
+
+/* CHART */
+.chart-wrap{position:relative;width:100%;padding:0 28px 8px}
+
+/* PROGRESS */
+.prog-wrap{padding:16px 28px 8px}
+.pr{margin-bottom:12px}
+.pr-row{display:flex;justify-content:space-between;margin-bottom:4px}
+.pr-name{font-size:12px;color:#374151;font-weight:600}
+.pr-val{font-size:12px;color:#7c3aed;font-weight:700}
+.pr-track{height:7px;background:#ede9f9;border-radius:4px;overflow:hidden}
+.pr-bar{height:100%;border-radius:4px}
+
+/* FLOW */
+.flow{padding:18px 28px;background:#faf7ff;border-top:1px solid #f0eaf9}
+.flow-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a3d4;margin-bottom:14px}
+.flow-row{display:flex;align-items:flex-start;gap:0}
+.fs{flex:1;text-align:center;position:relative}
+.fs:not(:last-child)::after{content:'→';position:absolute;right:-6px;top:13px;font-size:14px;color:#c4b5fd}
+.fi{width:36px;height:36px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.ft{font-size:11px;font-weight:700;color:#1a1a2e}
+.fd{font-size:10px;color:#9ca3af;margin-top:2px;line-height:1.35}
+
+/* STEPS */
+.steps{padding:18px 28px 4px}
+.step{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.snum{width:26px;height:26px;border-radius:50%;background:#7c3aed;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stitle{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+.sdesc{font-size:11px;color:#6b7280;line-height:1.55}
+
+/* COMP TABLE */
+.ctable{width:100%;border-collapse:collapse;font-size:12px}
+.ctable th{background:#1a1a2e;color:#fff;padding:9px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.5px}
+.ctable td{padding:9px 10px;border-bottom:1px solid #f0eaf9;color:#374151}
+.ctable tr:nth-child(even) td{background:#faf7ff}
+.ck{color:#7c3aed;font-size:13px}.cx{color:#f87171;font-size:13px}
+
+/* MISSING */
+.missing{list-style:none;padding:0}
+.missing li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f0eaf9;font-size:12px;color:#374151}
+.missing li:last-child{border-bottom:none}
+.mdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
+/* VIDEO */
+.evid{padding:16px 28px;text-align:center;background:#faf7ff;border-top:1px solid #f0eaf9}
+.vl{font-size:9px;color:#b0a3d4;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.vb{display:inline-block;background:#2563eb;color:#fff;padding:10px 22px;border-radius:6px;font-size:12px;font-weight:700}
+
+/* CTA */
+.cta{padding:22px 28px;text-align:center}
+.cta-btn{display:inline-block;background:#7c3aed;color:#fff;padding:12px 30px;border-radius:28px;font-size:13px;font-weight:700}
+.cta-sub{font-size:11px;color:#b0a3d4;margin-top:8px}
+
+/* FOOTER */
+.ef{padding:16px 28px;border-top:1px solid #e8e2f5}
+.efn{font-size:13px;font-weight:700;color:#1a1a2e}
+.eft{font-size:11px;color:#4b5563}
+.efc{font-size:11px;color:#b0a3d4;margin-top:2px}
+.efc a{color:#7c3aed;text-decoration:none}
+
+/* PLAIN */
+.plain{padding:22px 28px;font-size:13px;line-height:1.8;color:#374151}
+.plain p{margin-bottom:12px}
+
+/* LOGO BAR */
+.lbar{padding:16px 28px;border-top:1px solid #f0eaf9}
+.lbar-lbl{font-size:9px;color:#b0a3d4;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.lbar-row{display:flex;gap:10px;flex-wrap:wrap}
+.lpill{padding:5px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.4px}
+
+/* DIVIDER LABEL */
+.dlabel{padding:10px 28px 4px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0a3d4;border-top:1px solid #f0eaf9}
+
+/* SVG flow inline */
+.svg-flow{padding:0 28px 8px}
+</style>
+
+<h2 class="sr-only">ProspectIQ — six email template options to choose from</h2>
+
+<div class="picker">
+  <div class="pick-card active" onclick="showTpl('cold')">
+    <div class="pick-icon">❄️</div>
+    <div class="pick-label">Cold Email</div>
+    <div class="pick-sub">First touch · Signal-led</div>
+  </div>
+  <div class="pick-card" onclick="showTpl('followup')">
+    <div class="pick-icon">📈</div>
+    <div class="pick-label">Follow-Up</div>
+    <div class="pick-sub">Benchmark data · Fresh angle</div>
+  </div>
+  <div class="pick-card" onclick="showTpl('intro')">
+    <div class="pick-icon">👋</div>
+    <div class="pick-label">Introduction</div>
+    <div class="pick-sub">End-to-end flow · Onboarding</div>
+  </div>
+  <div class="pick-card" onclick="showTpl('breakup')">
+    <div class="pick-icon">🔚</div>
+    <div class="pick-label">Breakup</div>
+    <div class="pick-sub">Last note · What you missed</div>
+  </div>
+  <div class="pick-card" onclick="showTpl('ceo')">
+    <div class="pick-icon">🏢</div>
+    <div class="pick-label">CEO / Executive</div>
+    <div class="pick-sub">Board-level ROI · Strategic</div>
+  </div>
+  <div class="pick-card" onclick="showTpl('casestudy')">
+    <div class="pick-icon">🏆</div>
+    <div class="pick-label">Case Study</div>
+    <div class="pick-sub">Proof · Real results · Story</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  1. COLD EMAIL
+════════════════════════════════════ -->
+<div id="tpl-cold" class="tpl-wrap active">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero">
+    <div class="eyebrow">For Growth Teams at &lt;Company&gt;</div>
+    <h1>You're spending across <span class="vp">six channels</span>.<br><span class="vpk">One</span> is moving revenue.</h1>
+    <p>Most growth teams at &lt;Company&gt;'s scale can't tell which channel actually converts. ProspectIQ shows you exactly which signals drive revenue — before your competitors act on them.</p>
+  </div>
+  <div class="pnote">
+    <div class="pnote-lbl">A note for &lt;FirstName&gt;</div>
+    <div class="pnote-badge">&lt;FirstName&gt; · &lt;Title&gt;</div>
+    <blockquote>"&lt;Company&gt; just hired three growth marketers last month — teams scaling that fast usually hit the attribution wall right when they need clarity most. That's exactly where ProspectIQ pays for itself. That's why I'm writing."</blockquote>
+    <div class="sig">— &lt;SenderName&gt;, &lt;SenderTitle&gt;</div>
+  </div>
+  <div class="sec">
+    <div class="sec-lbl">01 · The Problem</div>
+    <h2>Your spend is scattered. Attribution lies.</h2>
+    <p>Sales teams at scale are guessing. ProspectIQ correlates 47 buying signals — job changes, tech installs, funding rounds, content engagement — into one ranked score your reps act on daily.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="sv cp">47×</div><div class="sl">Signals tracked</div></div>
+    <div class="stat"><div class="sv cpk">68%</div><div class="sl">Less prospecting</div></div>
+    <div class="stat"><div class="sv cb">2.8×</div><div class="sl">More pipeline</div></div>
+    <div class="stat"><div class="sv cp">11 days</div><div class="sl">Faster close</div></div>
+  </div>
+  <div class="sec" style="padding-bottom:8px">
+    <div class="sec-lbl">02 · Revenue by Signal Source</div>
+    <h2>See which channel moves money.</h2>
+    <div style="display:flex;gap:10px;margin-bottom:8px;font-size:10px;color:#9ca3af">
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#7c3aed;display:inline-block"></span>With ProspectIQ</span>
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#e8e2f5;border:1px dashed #c4b5fd;display:inline-block"></span>Without</span>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height:160px"><canvas id="c1" role="img" aria-label="Bar chart comparing pipeline value by signal source with and without ProspectIQ">Job Change $72k vs $41k; Tech Install $63k vs $28k; Funding $58k vs $22k; Content $44k vs $29k; News $31k vs $18k.</canvas></div>
+  <div class="flow">
+    <div class="flow-lbl">How ProspectIQ Works</div>
+    <div class="flow-row">
+      <div class="fs"><div class="fi" style="background:#ede9fe">🔍</div><div class="ft">Capture</div><div class="fd">47 real-time signals</div></div>
+      <div class="fs"><div class="fi" style="background:#fce7f3">🧠</div><div class="ft">Score</div><div class="fd">ML buy probability</div></div>
+      <div class="fs"><div class="fi" style="background:#dbeafe">⚡</div><div class="ft">Queue</div><div class="fd">Top 10 daily accounts</div></div>
+      <div class="fs"><div class="fi" style="background:#ede9fe">📈</div><div class="ft">Close</div><div class="fd">11-day faster cycle</div></div>
+    </div>
+  </div>
+  <div class="roi">
+    <div class="roi-lbl">ProspectIQ ROI · At a Glance</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">3.2×</div><div class="rd">Avg ROAS</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">$10M+</div><div class="rd">Spend optimised</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">92%</div><div class="rd">Model accuracy</div></div>
+      <div class="ri"><div class="rn" style="color:#c4b5fd">14 days</div><div class="rd">To first result</div></div>
+    </div>
+  </div>
+  <div class="lbar">
+    <div class="lbar-lbl">In Production At</div>
+    <div class="lbar-row">
+      <div class="lpill" style="background:#ede9fe;color:#4c2f8a">Stripe</div>
+      <div class="lpill" style="background:#dbeafe;color:#1e40af">Notion</div>
+      <div class="lpill" style="background:#fce7f3;color:#9d174d">Rippling</div>
+      <div class="lpill" style="background:#ede9fe;color:#4c2f8a">Linear</div>
+      <div class="lpill" style="background:#dbeafe;color:#1e40af">Vercel</div>
+    </div>
+  </div>
+  <div class="evid"><div class="vl">See It in Action</div><a href="#" class="vb">▶ Watch 2-min Demo →</a></div>
+  <div class="cta"><a href="#" class="cta-btn">Book a 20-min strategy call →</a><div class="cta-sub">No commitment. See exactly how ProspectIQ maps to &lt;Company&gt;.</div></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc">&lt;phone&gt; · <a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+  2. FOLLOW-UP
+════════════════════════════════════ -->
+<div id="tpl-followup" class="tpl-wrap">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero" style="padding-bottom:14px">
+    <div class="eyebrow">Re: Pipeline at &lt;Company&gt; — new Q2 data</div>
+    <h1>Instead of following up,<br>I brought <span class="vp">benchmark data</span>.</h1>
+    <p>Among 240 companies at &lt;Company&gt;'s growth stage that adopted intent-based prospecting in Q1, here's what 90 days looks like.</p>
+  </div>
+  <div class="sec" style="padding-bottom:4px">
+    <div class="sec-lbl">Before vs After · 90-Day Cohort</div>
+    <h2>What teams your size are achieving</h2>
+  </div>
+  <div class="prog-wrap">
+    <div style="display:flex;gap:0;margin-bottom:14px">
+      <div style="flex:1;text-align:center;padding:8px;background:#faf7ff;border-radius:8px 0 0 8px;border:1px solid #e8e2f5;font-size:10px;font-weight:700;color:#7c3aed">BEFORE</div>
+      <div style="flex:1;text-align:center;padding:8px;background:#7c3aed;border-radius:0 8px 8px 0;font-size:10px;font-weight:700;color:#fff">AFTER ProspectIQ</div>
+    </div>
+    <div class="pr"><div class="pr-row"><span class="pr-name">Lead-to-Opportunity Rate</span><span class="pr-val">12% → 31%</span></div><div class="pr-track"><div class="pr-bar" style="width:31%;background:#7c3aed"></div></div></div>
+    <div class="pr"><div class="pr-row"><span class="pr-name">Avg Deal Size</span><span class="pr-val">$18k → $46k</span></div><div class="pr-track"><div class="pr-bar" style="width:66%;background:#2563eb"></div></div></div>
+    <div class="pr"><div class="pr-row"><span class="pr-name">Sales Cycle Length</span><span class="pr-val">74 days → 51 days</span></div><div class="pr-track"><div class="pr-bar" style="width:51%;background:#ec4899"></div></div></div>
+    <div class="pr"><div class="pr-row"><span class="pr-name">Reps Hitting Quota</span><span class="pr-val">41% → 79%</span></div><div class="pr-track"><div class="pr-bar" style="width:79%;background:#7c3aed"></div></div></div>
+  </div>
+  <div class="sec" style="padding-bottom:4px">
+    <div class="sec-lbl">Pipeline Velocity · 6-Month Trend</div>
+    <h2>What the growth curve looks like</h2>
+    <div style="display:flex;gap:10px;margin-bottom:6px;font-size:10px;color:#9ca3af">
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:14px;height:2px;background:#7c3aed;display:inline-block"></span>With ProspectIQ</span>
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:14px;height:2px;background:#e8e2f5;border-top:2px dashed #c4b5fd;display:inline-block"></span>Baseline</span>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height:145px"><canvas id="c2" role="img" aria-label="Line chart showing 6-month pipeline growth: ProspectIQ $120k to $620k vs baseline $120k to $190k">ProspectIQ: $120k, $180k, $260k, $380k, $490k, $620k. Baseline: $120k to $190k.</canvas></div>
+  <div class="roi" style="margin-top:0">
+    <div class="roi-lbl">Quick ROI Estimate for &lt;Company&gt;</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">$2.4M</div><div class="rd">Pipeline / yr</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">18×</div><div class="rd">ROI at your ACV</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">43 days</div><div class="rd">Payback period</div></div>
+    </div>
+  </div>
+  <div class="plain"><p>One thing I saw consistently in the data: the teams that moved fastest weren't the ones with the biggest sales org — they were the ones who stopped treating all leads the same.</p><p>Would 15 minutes to walk through what this looks like at &lt;Company&gt;'s scale be worth it this week?</p></div>
+  <div class="evid"><div class="vl">Benchmark Breakdown</div><a href="#" class="vb">▶ 3-min Data Walkthrough →</a></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc"><a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+  3. INTRODUCTION
+════════════════════════════════════ -->
+<div id="tpl-intro" class="tpl-wrap">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero">
+    <div class="eyebrow">Introduction</div>
+    <h1>Hi &lt;FirstName&gt;,<br><span class="vb">&lt;SenderName&gt;</span> here.</h1>
+    <p>I'm reaching out because &lt;Company&gt; is at exactly the growth stage where ProspectIQ has the most impact — and I wanted to introduce myself properly before anything else.</p>
+  </div>
+  <div class="flow">
+    <div class="flow-lbl">End-to-End · How ProspectIQ fits your stack</div>
+    <div class="svg-flow" style="padding:0 0 4px">
+      <svg width="100%" viewBox="0 0 560 110" style="overflow:visible">
+        <defs><marker id="pa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#c4b5fd" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+        <rect x="2" y="32" width="90" height="46" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="47" y="51" text-anchor="middle" font-size="9" font-weight="700" fill="#4c2f8a" font-family="Helvetica Neue,sans-serif">YOUR CRM</text>
+        <text x="47" y="65" text-anchor="middle" font-size="8" fill="#7c3aed" font-family="Helvetica Neue,sans-serif">Salesforce / HubSpot</text>
+        <line x1="94" y1="55" x2="116" y2="55" stroke="#c4b5fd" stroke-width="1.5" marker-end="url(#pa)"/>
+        <rect x="118" y="22" width="108" height="66" rx="8" fill="#7c3aed" stroke="#7c3aed" stroke-width="1"/>
+        <text x="172" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="Helvetica Neue,sans-serif">ProspectIQ</text>
+        <text x="172" y="60" text-anchor="middle" font-size="8" fill="#ddd6fe" font-family="Helvetica Neue,sans-serif">Signal Engine</text>
+        <text x="172" y="72" text-anchor="middle" font-size="8" fill="#ddd6fe" font-family="Helvetica Neue,sans-serif">AI Scoring</text>
+        <line x1="228" y1="55" x2="250" y2="55" stroke="#c4b5fd" stroke-width="1.5" marker-end="url(#pa)"/>
+        <rect x="252" y="32" width="90" height="46" rx="8" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+        <text x="297" y="51" text-anchor="middle" font-size="9" font-weight="700" fill="#9d174d" font-family="Helvetica Neue,sans-serif">SCORED</text>
+        <text x="297" y="65" text-anchor="middle" font-size="8" fill="#ec4899" font-family="Helvetica Neue,sans-serif">Priority Queue</text>
+        <line x1="344" y1="55" x2="366" y2="55" stroke="#c4b5fd" stroke-width="1.5" marker-end="url(#pa)"/>
+        <rect x="368" y="32" width="90" height="46" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+        <text x="413" y="51" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af" font-family="Helvetica Neue,sans-serif">OUTREACH</text>
+        <text x="413" y="65" text-anchor="middle" font-size="8" fill="#2563eb" font-family="Helvetica Neue,sans-serif">Auto-sequenced</text>
+        <line x1="460" y1="55" x2="480" y2="55" stroke="#c4b5fd" stroke-width="1.5" marker-end="url(#pa)"/>
+        <rect x="482" y="32" width="74" height="46" rx="8" fill="#1a1a2e" stroke="#4c2f8a" stroke-width="1"/>
+        <text x="519" y="51" text-anchor="middle" font-size="9" font-weight="700" fill="#c4b5fd" font-family="Helvetica Neue,sans-serif">REVENUE</text>
+        <text x="519" y="65" text-anchor="middle" font-size="8" fill="#ddd6fe" font-family="Helvetica Neue,sans-serif">3.2× ROAS</text>
+        <text x="280" y="102" text-anchor="middle" font-size="8" fill="#9ca3af" font-family="Helvetica Neue,sans-serif">Job changes · Tech installs · Funding · Content signals</text>
+      </svg>
+    </div>
+  </div>
+  <div class="sec" style="padding-bottom:4px">
+    <div class="sec-lbl">Onboarding · Day by Day</div>
+    <h2>From intro call to first win in 14 days</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div><div class="stitle">Day 1 — Strategy Call (20 min)</div><div class="sdesc">Map your ICP, stack, and top 3 pipeline bottlenecks. No prep needed on your side.</div></div></div>
+    <div class="step"><div class="snum">2</div><div><div class="stitle">Day 2–3 — CRM Integration</div><div class="sdesc">Native Salesforce / HubSpot connectors. Your team works the same way — we augment it.</div></div></div>
+    <div class="step"><div class="snum">3</div><div><div class="stitle">Day 4–7 — Model Training</div><div class="sdesc">ProspectIQ learns from your historical wins. The AI is personalised to your ICP, not a generic benchmark.</div></div></div>
+    <div class="step"><div class="snum">4</div><div><div class="stitle">Day 8–14 — First Signals Live</div><div class="sdesc">Your reps see the first priority queue. Avg team identifies 3–5 high-intent accounts in week 2.</div></div></div>
+    <div class="step" style="margin-bottom:0"><div class="snum">5</div><div><div class="stitle">Day 30 — ROI Review</div><div class="sdesc">Pipeline created, deal velocity, quota attainment — your CSM owns this review with you.</div></div></div>
+  </div>
+  <div class="sec" style="padding-top:14px">
+    <div class="sec-lbl">Why ProspectIQ vs Alternatives</div>
+    <h2>What we do differently</h2>
+    <table class="ctable">
+      <thead><tr><th>Feature</th><th>ProspectIQ</th><th>ZoomInfo</th><th>Apollo</th></tr></thead>
+      <tbody>
+        <tr><td>Real-time intent signals</td><td><span class="ck">✓</span> 47 signals</td><td><span class="ck">✓</span> 12 signals</td><td><span class="cx">✗</span></td></tr>
+        <tr><td>AI buy probability score</td><td><span class="ck">✓</span> ML-trained</td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td></tr>
+        <tr><td>CRM auto-priority queue</td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td>Partial</td></tr>
+        <tr><td>Onboarding time</td><td><span class="ck">✓</span> 14 days</td><td>45–90 days</td><td>7–14 days</td></tr>
+        <tr><td>Dedicated CSM (all plans)</td><td><span class="ck">✓</span></td><td>Enterprise only</td><td><span class="cx">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="roi">
+    <div class="roi-lbl">Introduction ROI Snapshot</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">3.2×</div><div class="rd">Avg ROAS</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">$10M+</div><div class="rd">Spend optimised</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">14 days</div><div class="rd">To first result</div></div>
+    </div>
+  </div>
+  <div class="plain"><p>I'd love to show you what this looks like for a team at &lt;Company&gt;'s stage. No deck, no pitch — just a live walkthrough of your ICP in the system.</p><p>Is 20 minutes on &lt;Day&gt; or &lt;Day&gt; this week possible?</p></div>
+  <div class="evid"><div class="vl">See the Platform First</div><a href="#" class="vb">▶ Watch 2-min Intro →</a></div>
+  <div class="cta"><a href="#" class="cta-btn">Book a 20-min intro call →</a><div class="cta-sub">No commitment. See exactly how ProspectIQ maps to &lt;Company&gt;.</div></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc"><a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+  4. BREAKUP
+════════════════════════════════════ -->
+<div id="tpl-breakup" class="tpl-wrap">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero" style="padding-bottom:14px">
+    <div class="eyebrow">Closing the Loop</div>
+    <h1>Last note, &lt;FirstName&gt; —<br><span class="vp">and one honest question.</span></h1>
+  </div>
+  <div class="plain">
+    <p>I don't want to be the sender who keeps showing up uninvited, so this is my last note.</p>
+    <p>I'm genuinely not sure if the timing is off, the problem isn't a priority right now, or I just haven't made the case clearly enough. All fair reasons.</p>
+    <p>If any of this becomes relevant later — when pipeline targets tighten or you're ready to make intent data core to how &lt;Company&gt; prospects — I hope you'll reach out. The door's wide open.</p>
+  </div>
+  <div class="sec" style="padding-top:14px">
+    <div class="sec-lbl">What We Didn't Get to Show You</div>
+    <h2>A summary of what you're leaving on the table</h2>
+    <ul class="missing">
+      <li><div class="mdot" style="background:#7c3aed"></div><div><strong>Custom ICP model</strong> — trained on &lt;Company&gt;'s own win data. Not a generic benchmark. Yours.</div></li>
+      <li><div class="mdot" style="background:#ec4899"></div><div><strong>47-signal intent engine</strong> — job changes, tech installs, funding rounds, all correlated into one buy-probability score.</div></li>
+      <li><div class="mdot" style="background:#2563eb"></div><div><strong>11-day shorter sales cycles</strong> — at &lt;Company&gt;'s volume, that compounds fast every quarter.</div></li>
+      <li><div class="mdot" style="background:#7c3aed"></div><div><strong>Dedicated CSM from day 1</strong> — not a ticket queue. A named human who owns your ROI with you, weekly.</div></li>
+    </ul>
+  </div>
+  <div class="roi">
+    <div class="roi-lbl">What the Average Team Achieves in 90 Days</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">+158%</div><div class="rd">Pipeline generated</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">+38pp</div><div class="rd">Quota attainment</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">18×</div><div class="rd">ROI at median ACV</div></div>
+    </div>
+  </div>
+  <div class="sec" style="padding-bottom:6px">
+    <div class="sec-lbl">Revenue Attribution · 90-Day Cohort</div>
+    <h2>Where revenue is actually coming from</h2>
+    <div style="display:flex;gap:10px;margin-bottom:6px;font-size:10px;color:#9ca3af">
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:50%;background:#7c3aed;display:inline-block"></span>ProspectIQ-scored (58%)</span>
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:50%;background:#e8e2f5;border:1px solid #c4b5fd;display:inline-block"></span>Unscored (42%)</span>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height:140px"><canvas id="c3" role="img" aria-label="Donut chart: 58% revenue from ProspectIQ-scored leads, 42% from unscored">Revenue: 58% from ProspectIQ-scored leads, 42% from unscored leads.</canvas></div>
+  <div class="plain" style="padding-top:8px"><p style="font-size:11px;color:#b0a3d4">Either way — genuinely wishing you a strong quarter. You know where to find me. 👋</p></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc"><a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+  5. CEO / EXECUTIVE
+════════════════════════════════════ -->
+<div id="tpl-ceo" class="tpl-wrap">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero">
+    <div class="eyebrow">For the CEO at &lt;Company&gt;</div>
+    <h1>Your pipeline is a <span class="vp">cost centre</span>.<br>It shouldn't be.</h1>
+    <p>Most sales orgs at &lt;Company&gt;'s scale spend 60% of rep time on prospects who will never buy. ProspectIQ changes the economics — permanently.</p>
+  </div>
+  <div class="sec">
+    <div class="sec-lbl">Board-Level Economics</div>
+    <h2>Three numbers your board actually cares about</h2>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="sv cp">−$1.2M</div><div class="sl">Wasted rep hours / yr</div></div>
+    <div class="stat"><div class="sv cpk">+38pp</div><div class="sl">Quota attainment</div></div>
+    <div class="stat"><div class="sv cb">18×</div><div class="sl">ROI at median ACV</div></div>
+  </div>
+  <div class="sec" style="padding-bottom:6px">
+    <div class="sec-lbl">Revenue Efficiency · Before vs After</div>
+    <h2>Revenue per sales rep, by quarter</h2>
+    <div style="display:flex;gap:10px;margin-bottom:6px;font-size:10px;color:#9ca3af">
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#7c3aed;display:inline-block"></span>ProspectIQ teams</span>
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#e8e2f5;border:1px dashed #c4b5fd;display:inline-block"></span>Industry avg</span>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height:155px"><canvas id="c4" role="img" aria-label="Bar chart showing revenue per rep by quarter: ProspectIQ teams vs industry average">Q1: $148k vs $91k; Q2: $187k vs $98k; Q3: $234k vs $102k; Q4: $298k vs $107k.</canvas></div>
+  <div class="sec">
+    <div class="sec-lbl">Strategic Fit</div>
+    <h2>Three things that change for &lt;Company&gt;</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div><div class="stitle">Pipeline becomes predictable</div><div class="sdesc">Intent signals give your CRO a 30-day forward view of revenue with 92% model accuracy.</div></div></div>
+    <div class="step"><div class="snum">2</div><div><div class="stitle">Rep productivity compounds</div><div class="sdesc">Reps stop guessing. They work a ranked queue. Quota attainment rises 38pp in the first quarter on average.</div></div></div>
+    <div class="step" style="margin-bottom:0"><div class="snum">3</div><div><div class="stitle">CAC drops structurally</div><div class="sdesc">11-day shorter cycles × higher close rates = meaningful CAC reduction that shows up in your next board deck.</div></div></div>
+  </div>
+  <div class="roi">
+    <div class="roi-lbl">Executive ROI Summary</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">18×</div><div class="rd">ROI at median ACV</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">43 days</div><div class="rd">Payback period</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">$2.4M</div><div class="rd">Incremental pipeline / yr</div></div>
+    </div>
+  </div>
+  <div class="plain"><p>I'm not asking for a lot of your time. A 20-minute call — no deck, no pitch — where I walk through what this looks like for &lt;Company&gt; specifically is all I need.</p><p>If the numbers don't make sense for you, I'll tell you. Is &lt;Day&gt; or &lt;Day&gt; this week possible?</p></div>
+  <div class="cta"><a href="#" class="cta-btn">Book a 20-min executive call →</a><div class="cta-sub">Board-ready output. No commitment.</div></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc"><a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════
+  6. CASE STUDY
+════════════════════════════════════ -->
+<div id="tpl-casestudy" class="tpl-wrap">
+<div class="shell">
+  <div class="eh">
+    <div class="elogo"><div class="emark">P</div><div><div class="ename">ProspectIQ</div><div class="esub">AI Sales Intelligence</div></div></div>
+    <div class="efor">For <b>&lt;FirstName&gt;</b></div>
+  </div>
+  <div class="hero">
+    <div class="eyebrow">Customer Story · &lt;Company&gt; Sized Reference</div>
+    <h1>How <span class="vpk">Meridian SaaS</span> went from<br><span class="vp">$3.6M to $9.8M pipeline</span> in one quarter.</h1>
+    <p>Meridian was at the same inflection point as &lt;Company&gt; — scaling fast, pipeline scattered, reps working on gut feel. Here's exactly what changed.</p>
+  </div>
+  <div class="pnote">
+    <div class="pnote-lbl">The Situation</div>
+    <blockquote>"We had 12 reps and no way to know which of our 800 open accounts were actually ready to buy. ProspectIQ gave us a ranked list every Monday morning. Week 3, we closed a $340k deal that had been sitting cold for 6 months — the signal told us they'd just hired a CFO."</blockquote>
+    <div class="sig">— VP Sales, Meridian SaaS · 180-person Series B</div>
+  </div>
+  <div class="sec" style="padding-bottom:4px">
+    <div class="sec-lbl">The Results · One Quarter</div>
+    <h2>What Meridian achieved in 90 days</h2>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="sv cp">$9.8M</div><div class="sl">Pipeline (was $3.6M)</div></div>
+    <div class="stat"><div class="sv cpk">2.7×</div><div class="sl">ROAS improvement</div></div>
+    <div class="stat"><div class="sv cb">+41pp</div><div class="sl">Quota attainment</div></div>
+  </div>
+  <div class="sec" style="padding-bottom:4px">
+    <div class="sec-lbl">Pipeline Growth · Week by Week</div>
+    <h2>The ramp from week 1 to week 12</h2>
+    <div style="display:flex;gap:10px;margin-bottom:6px;font-size:10px;color:#9ca3af">
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:14px;height:2px;background:#7c3aed;display:inline-block"></span>Meridian pipeline</span>
+      <span style="display:flex;align-items:center;gap:3px"><span style="width:14px;height:2px;background:#ec4899;display:inline-block;opacity:.5"></span>Target</span>
+    </div>
+  </div>
+  <div class="chart-wrap" style="height:145px"><canvas id="c5" role="img" aria-label="Line chart: Meridian pipeline from $300k week 1 to $9.8M week 12, with target line at $6M">Meridian: $300k, $450k, $700k, $1.1M, $1.8M, $2.6M, $3.9M, $5.2M, $6.8M, $7.9M, $9.1M, $9.8M. Target: $6M flat.</canvas></div>
+  <div class="flow">
+    <div class="flow-lbl">Three Moves That Made the Difference</div>
+    <div class="flow-row">
+      <div class="fs"><div class="fi" style="background:#ede9fe">🎯</div><div class="ft">ICP Narrowed</div><div class="fd">From 800 to 60 prioritised accounts</div></div>
+      <div class="fs"><div class="fi" style="background:#fce7f3">📡</div><div class="ft">Signals Live</div><div class="fd">Job changes triggered 34 new opps</div></div>
+      <div class="fs"><div class="fi" style="background:#dbeafe">🔄</div><div class="ft">Cycle Cut</div><div class="fd">74 → 51 days average</div></div>
+      <div class="fs"><div class="fi" style="background:#ede9fe">🏆</div><div class="ft">$9.8M</div><div class="fd">Pipeline in one quarter</div></div>
+    </div>
+  </div>
+  <div class="roi">
+    <div class="roi-lbl">If &lt;Company&gt; Got the Same Result</div>
+    <div class="roi-g">
+      <div class="ri"><div class="rn" style="color:#c4b5fd">$X.XM</div><div class="rd">Projected pipeline</div></div>
+      <div class="ri"><div class="rn" style="color:#f9a8d4">2.7×</div><div class="rd">ROAS improvement</div></div>
+      <div class="ri"><div class="rn" style="color:#93c5fd">43 days</div><div class="rd">Payback period</div></div>
+    </div>
+  </div>
+  <div class="plain"><p>Meridian isn't an outlier — it's our median result for companies at their stage. I'd love to build a version of this projection for &lt;Company&gt; specifically.</p><p>Would 20 minutes to walk through what this looks like for your team be worth it?</p></div>
+  <div class="evid"><div class="vl">Full Case Study</div><a href="#" class="vb">▶ Read Meridian Story →</a></div>
+  <div class="cta"><a href="#" class="cta-btn">Book your pipeline audit →</a><div class="cta-sub">Free. 20 minutes. Custom projections for &lt;Company&gt;.</div></div>
+  <div class="ef"><div class="efn">&lt;SenderName&gt;</div><div class="eft">&lt;SenderTitle&gt; at ProspectIQ</div><div class="efc"><a href="#">prospectiq.io</a></div></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var charts={};
+function showTpl(id){
+  document.querySelectorAll('.tpl-wrap').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.pick-card').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tpl-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  setTimeout(()=>renderAll(),80);
+}
+function mkChart(id,cfg){
+  if(charts[id])return;
+  var el=document.getElementById(id);
+  if(!el)return;
+  charts[id]=new Chart(el,cfg);
+}
+function renderAll(){
+  var grey='#e8e2f5',pur='#7c3aed',pink='#ec4899',blue='#2563eb';
+  var axTick={font:{size:9,family:"'Helvetica Neue',sans-serif"},color:'#9ca3af'};
+  var grid={color:'#f0eaf9'};
+
+  mkChart('c1',{type:'bar',data:{labels:['Job Change','Tech Install','Funding','Content','News'],datasets:[{label:'With',data:[72,63,58,44,31],backgroundColor:pur,borderRadius:4,barPercentage:.55},{label:'Without',data:[41,28,22,29,18],backgroundColor:grey,borderRadius:4,barPercentage:.55,borderColor:'#c4b5fd',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{...axTick,autoSkip:false},grid:{display:false}},y:{ticks:{...axTick,callback:v=>'$'+v+'k'},grid}}}});
+
+  mkChart('c2',{type:'line',data:{labels:['M1','M2','M3','M4','M5','M6'],datasets:[{label:'ProspectIQ',data:[120,180,260,380,490,620],borderColor:pur,backgroundColor:'rgba(124,58,237,.07)',borderWidth:2,fill:true,tension:.4,pointBackgroundColor:pur,pointRadius:3},{label:'Baseline',data:[120,135,148,160,172,190],borderColor:grey,borderWidth:1.5,borderDash:[5,4],fill:false,tension:.3,pointBackgroundColor:'#c4b5fd',pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:axTick,grid:{display:false}},y:{ticks:{...axTick,callback:v=>'$'+v+'k'},grid}}}});
+
+  mkChart('c3',{type:'doughnut',data:{labels:['ProspectIQ-scored','Unscored'],datasets:[{data:[58,42],backgroundColor:[pur,grey],borderColor:[pur,'#c4b5fd'],borderWidth:1,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
+
+  mkChart('c4',{type:'bar',data:{labels:['Q1','Q2','Q3','Q4'],datasets:[{label:'ProspectIQ',data:[148,187,234,298],backgroundColor:pur,borderRadius:4,barPercentage:.55},{label:'Industry avg',data:[91,98,102,107],backgroundColor:grey,borderRadius:4,barPercentage:.55,borderColor:'#c4b5fd',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{...axTick,autoSkip:false},grid:{display:false}},y:{ticks:{...axTick,callback:v=>'$'+v+'k'},grid}}}});
+
+  mkChart('c5',{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],datasets:[{label:'Pipeline',data:[0.3,0.45,0.7,1.1,1.8,2.6,3.9,5.2,6.8,7.9,9.1,9.8],borderColor:pur,backgroundColor:'rgba(124,58,237,.06)',borderWidth:2,fill:true,tension:.4,pointBackgroundColor:pur,pointRadius:2},{label:'Target',data:[6,6,6,6,6,6,6,6,6,6,6,6],borderColor:pink,borderWidth:1.5,borderDash:[4,4],fill:false,pointRadius:0,tension:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{...axTick,autoSkip:false,maxRotation:0},grid:{display:false}},y:{ticks:{...axTick,callback:v=>'$'+v+'M'},grid}}}});
+}
+setTimeout(renderAll,300);
+</script>

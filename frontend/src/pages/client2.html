@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProspectIQ — Full Pipeline Architecture</title>
+<style>
+  :root {
+    --bg-main: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --border-radius: 12px;
+    
+    /* Theme Colors */
+    --purple-primary: #6366F1;
+    --purple-border: #E0E7FF;
+    --purple-bg: #EEF2FF;
+    --purple-text: #4338CA;
+    
+    --blue-primary: #3B82F6;
+    --blue-border: #DBEAFE;
+    --blue-bg: #EFF6FF;
+    --blue-text: #1E40AF;
+    
+    --orange-primary: #F59E0B;
+    --orange-border: #FEF3C7;
+    --orange-bg: #FFFBEB;
+    --orange-text: #92400E;
+
+    --red-primary: #EF4444;
+    --red-border: #FEE2E2;
+    --red-bg: #FEF2F2;
+    --red-text: #991B1B;
+    
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { background: var(--bg-main); color: var(--text-main); padding: 40px 24px; display: flex; justify-content: center; }
+  
+  .container { max-width: 1300px; width: 100%; background: var(--card-bg); border-radius: 16px; padding: 32px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); border: 1px solid #E2E8F0; }
+  .header-title { text-align: center; font-size: 24px; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; margin-bottom: 36px; }
+  .header-title span { color: var(--purple-primary); }
+
+  /* Pipeline Row Grid */
+  .pipeline-grid { display: flex; align-items: stretch; justify-content: space-between; gap: 8px; position: relative; margin-bottom: 40px; }
+  
+  .stage-card { background: var(--card-bg); border-radius: var(--border-radius); padding: 16px 12px; width: 145px; display: flex; flex-direction: column; align-items: center; border: 1.5px solid transparent; transition: all 0.3s ease; }
+  
+  /* Color Coding for Stages */
+  .stg-purple { border-color: #C7D2FE; background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FF 100%); }
+  .stg-blue { border-color: #BFDBFE; background: linear-gradient(180deg, #FFFFFF 0%, #F4F8FF 100%); }
+  .stg-orange { border-color: #FDE68A; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%); }
+  .stg-final { border-color: var(--purple-primary); background: linear-gradient(180deg, #FFFFFF 0%, #EEF2FF 100%); box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.15); }
+
+  .stage-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .stg-purple .stage-num { color: var(--purple-primary); }
+  .stg-blue .stage-num { color: var(--blue-primary); }
+  .stg-orange .stage-num { color: var(--orange-primary); }
+  .stg-final .stage-num { color: var(--purple-primary); }
+
+  .stage-name { font-size: 13px; font-weight: 600; text-align: center; color: #0F172A; margin-bottom: 14px; min-height: 36px; display: flex; align-items: center; }
+
+  /* Circular Icon Wrapper */
+  .icon-box { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .ib-purple { background: var(--purple-bg); border: 1px solid var(--purple-border); color: var(--purple-primary); }
+  .ib-blue { background: var(--blue-bg); border: 1px solid var(--blue-border); color: var(--blue-primary); }
+  .ib-orange { background: var(--orange-bg); border: 1px solid var(--orange-border); color: var(--orange-primary); }
+
+  /* Details Chips */
+  .feature-chip { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 6px 8px; width: 100%; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+  .feature-chip:last-child { margin-bottom: 0; }
+  .feature-title { font-size: 10.5px; font-weight: 600; color: #1E293B; line-height: 1.3; }
+  .feature-tech { font-size: 9.5px; color: var(--text-muted); display: block; margin-top: 1px; }
+
+  /* Connector Arrows */
+  .arrow-divider { display: flex; align-items: center; justify-content: center; padding-top: 55px; }
+  .arrow-divider svg { width: 16px; height: 16px; color: #94A3B8; }
+
+  /* Central Connector Down Arrow */
+  .down-connector { display: flex; justify-content: center; margin: 10px 0 24px; color: var(--orange-primary); }
+
+  /* Detail Section Panel */
+  .panel-section { border: 1.5px solid #FCD34D; border-radius: 14px; padding: 24px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF9 100%); box-shadow: 0 4px 20px rgba(245, 158, 11, 0.04); }
+  .panel-title { font-size: 13px; font-weight: 700; color: #78350F; text-align: center; margin-bottom: 20px; letter-spacing: 0.3px; text-transform: uppercase; }
+  
+  .cards-row { display: flex; gap: 12px; justify-content: space-between; }
+  .panel-card { border-radius: 10px; padding: 14px; flex: 1; background: #FFFFFF; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+  
+  /* Condition States Styling */
+  .card-noreply { border-left: 3.5px solid var(--purple-primary); }
+  .card-positive { border-left: 3.5px solid var(--blue-primary); }
+  .card-objection { border-left: 3.5px solid var(--orange-primary); background: var(--orange-bg); border-color: #FCD34D; }
+  .card-notint { border-left: 3.5px solid var(--red-primary); }
+  .card-booked { border-left: 3.5px solid #10B981; background: #F0FDF4; border-color: #A7F3D0; }
+
+  .card-head { font-size: 11.5px; font-weight: 700; margin-bottom: 10px; }
+  .card-noreply .card-head { color: var(--purple-text); }
+  .card-positive .card-head { color: var(--blue-text); }
+  .card-objection .card-head { color: var(--orange-text); }
+  .card-notint .card-head { color: var(--red-text); }
+  .card-booked .card-head { color: #065F46; }
+
+  .card-bullet { font-size: 10.5px; color: #475569; margin-bottom: 5px; line-height: 1.4; display: flex; align-items: center; gap: 4px; }
+  .card-bullet::before { content: "•"; color: #94A3B8; font-weight: bold; font-size: 12px; }
+  .card-booked .card-bullet { color: #047857; }
+
+  /* Sync Feedback Footer */
+  .footer-sync { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
+  .line-divider { height: 1px; flex: 1; background: #FDE68A; max-width: 200px; }
+  .sync-text { font-size: 11px; color: var(--orange-text); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-title"><span>ProspectIQ</span> — Full Pipeline Architecture</div>
+
+  <div class="pipeline-grid">
+
+    <div class="stage-card stg-purple">
+      <div class="stage-num">Stage 1</div>
+      <div class="stage-name">Domain Scraper</div>
+      <div class="icon-box ib-purple">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Enter Domain URL</span><span class="feature-tech">Playwright + Firecrawl</span></div>
+      <div class="feature-chip"><span class="feature-title">Full Site Scan</span><span class="feature-tech">Content &amp; Structure</span></div>
+      <div class="feature-chip"><span class="feature-title">Pinecone Memory</span><span class="feature-tech">GPT-4o Analysis</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-blue">
+      <div class="stage-num">Stage 2</div>
+      <div class="stage-name">ICP Extract</div>
+      <div class="icon-box ib-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Industries &amp; Roles</span><span class="feature-tech">Companies · Plans</span></div>
+      <div class="feature-chip"><span class="feature-title">Auto JSON</span><span class="feature-tech">Apollo 270M DB</span></div>
+      <div class="feature-chip"><span class="feature-title">PostgreSQL Stored</span><span class="feature-tech">Per Campaign</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-orange">
+      <div class="stage-num">Stage 3</div>
+      <div class="stage-name">Find Leads</div>
+      <div class="icon-box ib-orange">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Hunter.io Email</span><span class="feature-tech">Domain Search API</span></div>
+      <div class="feature-chip"><span class="feature-title">ISearch Enrich</span><span class="feature-tech">LinkedIn · Role</span></div>
+      <div class="feature-chip"><span class="feature-title">ZeroBounce Verify</span><span class="feature-tech">Before Every Send</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-purple">
+      <div class="stage-num">Stage 4</div>
+      <div class="stage-name">Score Leads</div>
+      <div class="icon-box ib-purple">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Hot 80-100</span><span class="feature-tech">Send Now</span></div>
+      <div class="feature-chip"><span class="feature-title">Warm 50-79</span><span class="feature-tech">Nurture Track</span></div>
+      <div class="feature-chip"><span class="feature-title">Cold 0-49</span><span class="feature-tech">Skip · ICP Miss</span></div>
+      <div class="feature-chip"><span class="feature-title">Priority Queue</span><span class="feature-tech">ICP Match Signals</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-blue">
+      <div class="stage-num">Stage 5</div>
+      <div class="stage-name">Outreach Execution</div>
+      <div class="icon-box ib-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Cold Email GPT-4o</span><span class="feature-tech">Resend + SMTP</span></div>
+      <div class="feature-chip"><span class="feature-title">LinkedIn DM</span><span class="feature-tech">Inbox Warmup</span></div>
+      <div class="feature-chip"><span class="feature-title">Follow-up Day 3</span><span class="feature-tech">Automated Sequence</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-orange">
+      <div class="stage-num">Stage 6</div>
+      <div class="stage-name">AI Reply Intelligence</div>
+      <div class="icon-box ib-orange">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Reads Reply Intent</span><span class="feature-tech">Context-Aware</span></div>
+      <div class="feature-chip"><span class="feature-title">Handles Objections</span><span class="feature-tech">GPT-4o Engine</span></div>
+      <div class="feature-chip"><span class="feature-title">Routes Outcome</span><span class="feature-tech">Book · Nurture · Skip</span></div>
+    </div>
+
+    <div class="arrow-divider">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+
+    <div class="stage-card stg-final">
+      <div class="stage-num">Stage 7</div>
+      <div class="stage-name">Meeting Booked</div>
+      <div class="icon-box ib-purple" style="background: #312E81; color: #FFFFFF; border: none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="feature-chip"><span class="feature-title">Calendly / Cal.com</span><span class="feature-tech">Auto-Scheduled</span></div>
+      <div class="feature-chip"><span class="feature-title">CRM Auto-Updated</span><span class="feature-tech">Pipeline Converted</span></div>
+      <div class="feature-chip"><span class="feature-title">Revenue Tracked</span><span class="feature-tech">Deal Progression</span></div>
+    </div>
+
+  </div>
+
+  <div class="down-connector">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7-7-7m14-6l-7 7-7-7"/></svg>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-title">Stage 6 Deep-Dive: Autonomous Reply Handler Logic</div>
+    <div class="cards-row">
+
+      <div class="panel-card card-noreply">
+        <div class="card-head">No Reply After 7 Days</div>
+        <div class="card-bullet">Dynamic contextual follow-up triggered</div>
+        <div class="card-bullet">Changes angle with fresh hook metrics</div>
+        <div class="card-bullet">Cap at 3 attempts, then gracefully pause</div>
+        <div class="card-bullet">Routes lead directly to warm nurture queue</div>
+      </div>
+
+      <div class="panel-card card-positive">
+        <div class="card-head">Positive Engagement</div>
+        <div class="card-bullet">AI evaluates explicit interest levels</div>
+        <div class="card-bullet">Constructs contextual, tailored answer</div>
+        <div class="card-bullet">Directly drops scheduling / demo link</div>
+        <div class="card-bullet" style="font-weight: 600; color: var(--blue-text);">CRM Tag: Marked as Interested</div>
+      </div>
+
+      <div class="panel-card card-objection">
+        <div class="card-head">Objection Triage</div>
+        <div class="card-bullet">Categorizes: Price / Timing / Authority</div>
+        <div class="card-bullet">Pulls dynamic counter-arguments</div>
+        <div class="card-bullet">Generates custom conversational rebuttal</div>
+        <div class="card-bullet">Softly pivots to value re-engagement</div>
+      </div>
+
+      <div class="panel-card card-notint">
+        <div class="card-head">Not Interested / Opt-Out</div>
+        <div class="card-bullet">Instantly issues a polite exit sign-off</div>
+        <div class="card-bullet" style="font-weight: 600; color: var(--red-text);">Lead flagged as Disqualified</div>
+        <div class="card-bullet">Executes real-time database unsubscribe</div>
+        <div class="card-bullet">Permanent global suppression list entry</div>
+      </div>
+
+      <div class="panel-card card-booked">
+        <div class="card-head">Meeting Finalized</div>
+        <div class="card-bullet">Webhook captures Cal.com confirmation</div>
+        <div class="card-bullet">Halts active parallel follow-up track</div>
+        <div class="card-bullet" style="font-weight: 700;">Instant Hubspot/CRM sync</div>
+        <div class="card-bullet" style="font-weight: 700;">Handoff to AEs complete</div>
+      </div>
+
+    </div>
+
+    <div class="footer-sync">
+      <div class="line-divider"></div>
+      <div class="sync-text">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+        Continuous Feedback Loop — Re-engages until Closed-Booked or Disqualified
+      </div>
+      <div class="line-divider"></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
