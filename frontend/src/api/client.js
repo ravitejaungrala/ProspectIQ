@@ -106,3 +106,72 @@ export const getAgentLogs = (campaignId) =>
   request(`/agents/logs/campaign/${campaignId}`);
 export const getAllAgentLogs = () =>
   request('/agents/logs');
+
+// ── Research Agent ──────────────────────────────────────────────
+export const researchAllLeads = (campaignId) =>
+  request(`/agents/research/campaign/${campaignId}/all`, { method: 'POST' });
+export const researchLead = (leadId) =>
+  request(`/agents/research/lead/${leadId}`, { method: 'POST' });
+export const getLeadHooks = (leadId) =>
+  request(`/agents/research/lead/${leadId}/hooks`);
+export const researchCompany = (domain) =>
+  request('/agents/research/company', { method: 'POST', body: JSON.stringify({ domain }) });
+
+// ── Lead Identification (KP) Agent ─────────────────────────────
+export const scoreLeads = (campaignId) =>
+  request(`/agents/kp/campaign/${campaignId}/score`, { method: 'POST' });
+export const getKeyPersons = (campaignId) =>
+  request(`/agents/kp/campaign/${campaignId}/key-persons`);
+export const getBestContact = (campaignId, domain) =>
+  request(`/agents/kp/campaign/${campaignId}/best-contact?domain=${encodeURIComponent(domain)}`);
+export const flagWeakLeads = (campaignId, threshold = 30) =>
+  request(`/agents/kp/campaign/${campaignId}/flag-weak?threshold=${threshold}`, { method: 'POST' });
+
+// ── Personalization Agent ───────────────────────────────────────
+export const batchPersonalize = (campaignId) =>
+  request(`/agents/personalization/campaign/${campaignId}/batch`, { method: 'POST' });
+export const personalizeStep = (stepId) =>
+  request(`/agents/personalization/step/${stepId}`, { method: 'POST' });
+export const previewPersonalization = (leadId, campaignId) =>
+  request(`/agents/personalization/lead/${leadId}/preview?campaign_id=${campaignId}`);
+export const getOpeningLine = (leadId, campaignId) =>
+  request(`/agents/personalization/lead/${leadId}/opening-line?campaign_id=${campaignId}`);
+
+// ── Outreach Agent ──────────────────────────────────────────────
+export const getSendQueue = (campaignId) =>
+  request(`/agents/outreach/campaign/${campaignId}/queue`);
+export const batchApproveAndSend = (campaignId, highPriorityOnly = false) =>
+  request(`/agents/outreach/campaign/${campaignId}/batch-send?high_priority_only=${highPriorityOnly}`, { method: 'POST' });
+export const runFullPipeline = (campaignId) =>
+  request(`/agents/outreach/campaign/${campaignId}/run-pipeline`, { method: 'POST' });
+export const getOutreachStats = (campaignId) =>
+  request(`/agents/outreach/campaign/${campaignId}/stats`);
+
+// ── Response Handling Agent ─────────────────────────────────────
+export const getResponseQueue = (campaignId) =>
+  request(`/agents/response/campaign/${campaignId}/queue`);
+export const autoRespond = (replyId) =>
+  request(`/agents/response/reply/${replyId}/auto-respond`, { method: 'POST' });
+export const handleAllUnhandled = (campaignId, autoSendLowRisk = false) =>
+  request(`/agents/response/campaign/${campaignId}/handle-all`, {
+    method: 'POST',
+    body: JSON.stringify({ auto_send_low_risk: autoSendLowRisk }),
+  });
+
+// ── Booking Agent ───────────────────────────────────────────────
+export const getHotLeads = (campaignId) =>
+  request(`/agents/booking/campaign/${campaignId}/hot-leads`);
+export const sendBookingLink = (leadId, campaignId, customMessage = '') =>
+  request(`/agents/booking/lead/${leadId}/send-link?campaign_id=${campaignId}`, {
+    method: 'POST',
+    body: JSON.stringify({ custom_message: customMessage }),
+  });
+export const confirmBooking = (leadId, campaignId, meetingInfo = {}) =>
+  request(`/agents/booking/lead/${leadId}/confirm?campaign_id=${campaignId}`, {
+    method: 'POST',
+    body: JSON.stringify(meetingInfo),
+  });
+export const followUpUnbooked = (campaignId) =>
+  request(`/agents/booking/campaign/${campaignId}/follow-up`, { method: 'POST' });
+export const getBookingPipeline = (campaignId) =>
+  request(`/agents/booking/campaign/${campaignId}/pipeline`);

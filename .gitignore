@@ -1,0 +1,17 @@
+# Ignore Python environment and config files
+.env
+*.env
+
+# Ignore node_modules for frontend
+frontend/node_modules/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
