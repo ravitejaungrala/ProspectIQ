@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Rocket, Plus, ExternalLink, Trash2 } from 'lucide-react'
+import { Rocket, Plus, ExternalLink, Trash2, X } from 'lucide-react'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import StatusBadge from '../components/StatusBadge'
@@ -22,7 +22,6 @@ export default function Campaigns() {
   const load = () => {
     getCampaigns().then(setCampaigns).catch(() => {}).finally(() => setLoading(false))
   }
-
   useEffect(() => { load() }, [])
 
   const handleCreate = async () => {
@@ -50,7 +49,7 @@ export default function Campaigns() {
 
   const handleDelete = async (e, id, name) => {
     e.stopPropagation()
-    if (!window.confirm(`Delete campaign "${name || 'Untitled'}"? This will remove all leads, emails, and analytics for this campaign.`)) return
+    if (!window.confirm(`Delete campaign "${name || 'Untitled'}"? This will remove all leads, emails, and analytics.`)) return
     try {
       await deleteCampaign(id)
       toast.success('Campaign deleted')
@@ -60,69 +59,62 @@ export default function Campaigns() {
     }
   }
 
-  if (loading) return <div style={styles.loading}>Loading...</div>
+  if (loading) return (
+    <div style={{ padding:'40px 0' }}>
+      {Array(3).fill(0).map((_,i) => (
+        <div key={i} style={{ height:'72px', borderRadius:'14px', marginBottom:'12px' }} className="skeleton" />
+      ))}
+    </div>
+  )
 
   return (
-    <div>
+    <div className="animate-in">
       <div style={styles.header}>
-        <h1 style={styles.title}>Campaigns</h1>
+        <div>
+          <h1 style={styles.title}>Campaigns</h1>
+          <p style={styles.subtitle}>{campaigns.length} campaign{campaigns.length !== 1 ? 's' : ''} running</p>
+        </div>
         <Button onClick={() => setShowCreate(!showCreate)}>
-          <Plus size={16} /> New Campaign
+          {showCreate ? <X size={15} /> : <Plus size={15} />}
+          {showCreate ? 'Cancel' : 'New Campaign'}
         </Button>
       </div>
 
       {showCreate && (
-        <Card style={{ marginBottom: '24px' }}>
-          <h3 style={styles.createTitle}>Stage 1 — Setup</h3>
+        <Card style={{ marginBottom: '22px' }} accent>
+          <div style={styles.createHeader}>
+            <div style={styles.createStep}>Stage 1</div>
+            <h3 style={styles.createTitle}>Setup Campaign</h3>
+          </div>
           <p style={styles.createDesc}>
             Paste your product URL. Our AI will scrape the website, extract a product summary,
             and build an ideal customer profile automatically.
           </p>
-          <div style={styles.createForm}>
-            <input
-              type="url"
-              placeholder="https://your-product.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              style={styles.input}
-            />
-          </div>
+
+          <input
+            type="url"
+            placeholder="https://your-product.com"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            style={styles.input}
+          />
+
           <div style={styles.senderSection}>
-            <div style={styles.senderLabel}>Sender Info (for email templates)</div>
+            <div style={styles.senderLabel}>Sender Info</div>
             <div style={styles.senderGrid}>
-              <input
-                type="text"
-                placeholder="Your Name"
-                value={senderName}
-                onChange={(e) => setSenderName(e.target.value)}
-                style={styles.input}
-              />
-              <input
-                type="text"
-                placeholder="Your Title (e.g. Growth Lead)"
-                value={senderTitle}
-                onChange={(e) => setSenderTitle(e.target.value)}
-                style={styles.input}
-              />
-              <input
-                type="email"
-                placeholder="Your Email"
-                value={senderEmail}
-                onChange={(e) => setSenderEmail(e.target.value)}
-                style={styles.input}
-              />
-              <input
-                type="tel"
-                placeholder="Your Phone"
-                value={senderPhone}
-                onChange={(e) => setSenderPhone(e.target.value)}
-                style={styles.input}
-              />
+              <input type="text" placeholder="Your Name"  value={senderName}  onChange={(e) => setSenderName(e.target.value)}  style={styles.input} />
+              <input type="text" placeholder="Your Title" value={senderTitle} onChange={(e) => setSenderTitle(e.target.value)} style={styles.input} />
+              <input type="email" placeholder="Your Email" value={senderEmail} onChange={(e) => setSenderEmail(e.target.value)} style={styles.input} />
+              <input type="tel"  placeholder="Your Phone" value={senderPhone} onChange={(e) => setSenderPhone(e.target.value)} style={styles.input} />
             </div>
           </div>
-          <div style={{ marginTop: '16px' }}>
+
+          <div style={{ marginTop: '18px' }}>
             <Button onClick={handleCreate} disabled={creating || !url.trim()}>
-              {creating ? 'Creating...' : 'Analyze & Create'}
+              {creating
+                ? <><span style={styles.spinner} />Analyzing...</>
+                : <><Rocket size={14} />Analyze & Create</>
+              }
             </Button>
           </div>
         </Card>
@@ -131,10 +123,9 @@ export default function Campaigns() {
       {campaigns.length === 0 ? (
         <Card>
           <div style={styles.empty}>
-            <Rocket size={48} color="var(--text-muted)" />
-            <p style={{ color: 'var(--text-secondary)', marginTop: '12px' }}>
-              No campaigns yet. Click "New Campaign" to get started!
-            </p>
+            <div style={styles.emptyIcon}><Rocket size={26} color="#ff4500" /></div>
+            <p style={styles.emptyTitle}>No campaigns yet</p>
+            <p style={styles.emptyText}>Click "New Campaign" to get started!</p>
           </div>
         </Card>
       ) : (
@@ -143,23 +134,27 @@ export default function Campaigns() {
             <Card key={c.id} onClick={() => navigate(`/campaigns/${c.id}`)}>
               <div style={styles.row}>
                 <div style={styles.rowLeft}>
-                  <div style={styles.name}>
-                    {c.product_name || 'Processing...'}
+                  <div style={styles.campaignIcon}>
+                    <Rocket size={15} color="#ff4500" />
                   </div>
-                  <div style={styles.url}>
-                    <ExternalLink size={12} /> {c.product_url}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={styles.name}>{c.product_name || 'Processing...'}</div>
+                    <div style={styles.url}>
+                      <ExternalLink size={11} style={{ flexShrink: 0 }} />
+                      <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.product_url}</span>
+                    </div>
                   </div>
                 </div>
                 <div style={styles.rowRight}>
-                  <span style={styles.leads}>{c.lead_count} leads</span>
+                  <span style={styles.leadsChip}>{c.lead_count} leads</span>
                   <StatusBadge status={c.status} />
-                  <span style={styles.date}>
-                    {new Date(c.created_at).toLocaleDateString()}
-                  </span>
+                  <span style={styles.date}>{new Date(c.created_at).toLocaleDateString()}</span>
                   <button
                     onClick={(e) => handleDelete(e, c.id, c.product_name)}
                     style={styles.deleteBtn}
                     title="Delete campaign"
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -174,52 +169,67 @@ export default function Campaigns() {
 }
 
 const styles = {
-  loading: {
-    display: 'flex', justifyContent: 'center', alignItems: 'center',
-    height: '50vh', color: 'var(--text-secondary)',
+  header: { display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'24px' },
+  title: { fontSize:'26px', fontWeight:800, letterSpacing:'-0.4px' },
+  subtitle: { fontSize:'13px', color:'var(--text-muted)', marginTop:'4px' },
+  createHeader: { display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' },
+  createStep: {
+    fontSize:'10px', fontWeight:700, padding:'3px 10px', borderRadius:'20px',
+    background:'rgba(255,69,0,0.1)', color:'#ff4500', letterSpacing:'0.4px',
   },
-  header: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    marginBottom: '24px',
-  },
-  title: { fontSize: '28px', fontWeight: 700 },
-  createTitle: { fontSize: '16px', fontWeight: 600, marginBottom: '8px' },
-  createDesc: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' },
-  createForm: { display: 'flex', gap: '12px', marginBottom: '16px' },
-  senderSection: { marginTop: '4px' },
-  senderLabel: { fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' },
-  senderGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' },
+  createTitle: { fontSize:'15px', fontWeight:700 },
+  createDesc: { fontSize:'13px', color:'var(--text-secondary)', marginBottom:'16px', lineHeight:1.6 },
   input: {
-    flex: 1, padding: '10px 16px', borderRadius: '8px',
-    border: '1px solid var(--border)', background: 'var(--bg-primary)',
-    color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+    width:'100%', padding:'11px 14px', borderRadius:'10px', marginBottom:'10px',
+    border:'1.5px solid var(--border)', background:'var(--bg-secondary)',
+    color:'var(--text-primary)', fontSize:'14px', outline:'none',
+    transition:'border-color 0.15s',
   },
-  list: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  row: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  senderSection: { marginTop:'4px' },
+  senderLabel: {
+    fontSize:'11px', fontWeight:700, color:'var(--text-muted)',
+    textTransform:'uppercase', letterSpacing:'0.7px', marginBottom:'10px',
   },
-  rowLeft: {},
-  rowRight: {
-    display: 'flex', alignItems: 'center', gap: '12px',
+  senderGrid: { display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' },
+  spinner: {
+    display:'inline-block', width:'13px', height:'13px', borderRadius:'50%',
+    border:'2px solid rgba(255,255,255,0.3)', borderTopColor:'#fff',
+    animation:'spin 0.7s linear infinite',
   },
-  name: { fontSize: '15px', fontWeight: 600 },
+  list: { display:'flex', flexDirection:'column', gap:'10px' },
+  row: { display:'flex', justifyContent:'space-between', alignItems:'center', gap:'12px' },
+  rowLeft: { display:'flex', alignItems:'center', gap:'12px', flex:1, minWidth:0 },
+  campaignIcon: {
+    width:'36px', height:'36px', borderRadius:'9px', background:'rgba(255,69,0,0.08)',
+    display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+  },
+  rowRight: { display:'flex', alignItems:'center', gap:'10px', flexShrink:0 },
+  name: { fontSize:'14px', fontWeight:700, color:'#111' },
   url: {
-    fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px',
-    display: 'flex', alignItems: 'center', gap: '4px',
+    fontSize:'11px', color:'var(--text-muted)', marginTop:'3px',
+    display:'flex', alignItems:'center', gap:'4px', maxWidth:'300px', overflow:'hidden',
   },
-  leads: {
-    fontSize: '12px', color: 'var(--text-secondary)',
-    background: 'var(--bg-primary)', padding: '4px 10px', borderRadius: '20px',
+  leadsChip: {
+    fontSize:'12px', fontWeight:600, color:'#374151',
+    background:'var(--bg-secondary)', padding:'4px 10px',
+    borderRadius:'20px', border:'1px solid var(--border)', flexShrink:0,
   },
-  date: { fontSize: '12px', color: 'var(--text-muted)' },
+  date: { fontSize:'12px', color:'var(--text-muted)' },
   deleteBtn: {
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    width: '30px', height: '30px', borderRadius: '6px',
-    background: 'none', border: '1px solid transparent',
-    color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.15s',
+    display:'flex', alignItems:'center', justifyContent:'center',
+    width:'30px', height:'30px', borderRadius:'7px',
+    background:'transparent', border:'none',
+    color:'var(--text-muted)', cursor:'pointer', transition:'all 0.15s',
   },
   empty: {
-    display: 'flex', flexDirection: 'column', alignItems: 'center',
-    justifyContent: 'center', padding: '48px', textAlign: 'center',
+    display:'flex', flexDirection:'column', alignItems:'center',
+    padding:'52px 24px', textAlign:'center',
   },
+  emptyIcon: {
+    width:'56px', height:'56px', borderRadius:'14px',
+    background:'rgba(255,69,0,0.08)',
+    display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'14px',
+  },
+  emptyTitle: { fontSize:'15px', fontWeight:700, marginBottom:'6px' },
+  emptyText: { fontSize:'13px', color:'var(--text-muted)' },
 }

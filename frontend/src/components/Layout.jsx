@@ -15,11 +15,13 @@ const styles = {
   container: {
     display: 'flex',
     minHeight: '100vh',
+    background: 'var(--bg-secondary)',
   },
   main: {
     flex: 1,
     marginLeft: 'var(--sidebar-width)',
-    padding: '32px',
-    maxWidth: '1200px',
+    padding: '32px 36px',
+    maxWidth: 'calc(100vw - var(--sidebar-width))',
+    minHeight: '100vh',
   },
 }
