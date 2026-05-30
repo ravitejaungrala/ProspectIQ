@@ -1,0 +1,12 @@
+# Ignore environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code settings
+.vscode/

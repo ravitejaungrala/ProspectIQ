@@ -6,7 +6,7 @@ from database import get_db
 logger = logging.getLogger(__name__)
 from models import new_lead, doc_to_dict
 from schemas import LeadOut, LeadSearchParams
-from services.lead_finder import find_leads_hunter, verify_email_hunter
+from services.lead_finder import find_leads_apollo, verify_email_apollo
 from services.ai_service import score_lead_fit
 from services.deduplication import run_deduplication
 
@@ -26,7 +26,7 @@ async def get_campaign_leads(campaign_id: str, status: str = None):
 
 @router.post("/campaign/{campaign_id}/find", response_model=list[LeadOut])
 async def find_leads(campaign_id: str, params: LeadSearchParams):
-    """Stage 2: Find leads using Hunter.io."""
+    """Stage 2: Find leads using Apollo.io."""
     db = get_db()
     campaign = await db.campaigns.find_one({"_id": campaign_id})
     if not campaign:
@@ -38,7 +38,7 @@ async def find_leads(campaign_id: str, params: LeadSearchParams):
     if not domains:
         raise HTTPException(status_code=400, detail="Please provide at least one target company domain (e.g. google.com)")
 
-    raw_leads = await find_leads_hunter(domains, roles, params.limit)
+    raw_leads = await find_leads_apollo(domains, roles, params.limit)
 
     created_leads = []
     for raw in raw_leads:
@@ -95,7 +95,7 @@ async def _verify_score_deduplicate(campaign_id: str):
 
         # Step 1: Verify email
         try:
-            email_status = await verify_email_hunter(lead["email"])
+            email_status = await verify_email_apollo(lead["email"])
         except Exception as exc:
             logger.warning(f"Email verification failed for {lead['email']}: {exc}")
             email_status = "risky"

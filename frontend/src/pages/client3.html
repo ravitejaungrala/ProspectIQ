@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhanadurga — HRMS Platform Architecture</title>
+<style>
+  :root {
+    --bg-main: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --border-radius: 12px;
+    --border-inner: 8px;
+    
+    /* Theme Palette */
+    --purple: #6366F1;
+    --purple-light: #EEF2FF;
+    --purple-border: #E0E7FF;
+    --purple-text: #4338CA;
+    
+    --blue: #0EA5E9;
+    --blue-light: #F0F9FF;
+    --blue-border: #E0F2FE;
+    --blue-text: #0369A1;
+    
+    --amber: #F59E0B;
+    --amber-light: #FFFBEB;
+    --amber-border: #FEF3C7;
+    --amber-text: #B45309;
+    
+    --emerald: #10B981;
+    --emerald-light: #F0FDF4;
+    --emerald-border: #D1FAE5;
+    --emerald-text: #047857;
+
+    --slate-dark: #0F172A;
+    --slate-muted: #64748B;
+    --border-color: #E2E8F0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  body { background: var(--bg-main); color: var(--slate-dark); padding: 40px 24px; display: flex; justify-content: center; }
+  
+  .container { max-width: 1440px; width: 100%; background: var(--card-bg); border-radius: 16px; padding: 32px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02); border: 1px solid var(--border-color); }
+  
+  /* Top Navigation / Brand Header */
+  .main-header { text-align: center; margin-bottom: 32px; border-bottom: 1px solid var(--border-color); padding-bottom: 24px; }
+  .brand-title { font-size: 26px; font-weight: 800; color: var(--slate-dark); letter-spacing: -0.5px; margin-bottom: 6px; }
+  .brand-title span { color: var(--purple); }
+  .brand-subtitle { font-size: 12px; font-weight: 600; color: var(--slate-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Section Title Standard styling */
+  .section-container { margin-bottom: 28px; }
+  .section-heading { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--slate-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .section-heading::after { content: ""; height: 1px; flex: 1; background: var(--border-color); }
+
+  /* Grid Frameworks */
+  .row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .row-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .row-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+
+  /* Tech Stack Cards */
+  .tech-card { border-radius: var(--border-radius); padding: 20px; border: 1px solid transparent; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .tc-purple { border-top: 4px solid var(--purple); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.03); }
+  .tc-blue { border-top: 4px solid var(--blue); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.03); }
+  .tc-amber { border-top: 4px solid var(--amber); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.03); }
+  .tc-emerald { border-top: 4px solid var(--emerald); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.03); }
+  
+  .tech-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: var(--slate-dark); }
+  .tech-card p { font-size: 11px; color: var(--slate-muted); line-height: 1.5; }
+
+  /* User Portal Framework */
+  .portal-box { border: 1px solid var(--border-color); border-radius: var(--border-radius); background: #FCFDFE; overflow: hidden; }
+  .portal-bar { padding: 8px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #FFFFFF; }
+  .pb-admin { background: var(--purple); }
+  .pb-employee { background: var(--blue); }
+  
+  .portal-body { padding: 16px; }
+  .portal-group { margin-bottom: 14px; }
+  .portal-group:last-child { margin-bottom: 0; }
+  .group-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--slate-muted); margin-bottom: 8px; letter-spacing: 0.3px; }
+  
+  /* Badges & Pills */
+  .badge-container { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { background: #FFFFFF; border: 1px solid #E2E8F0; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+
+  /* AI Agent Architecture Area */
+  .agent-block { border: 1px solid var(--purple-border); background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFF 100%); border-radius: var(--border-radius); padding: 20px; }
+  .agent-header { font-size: 12px; font-weight: 700; text-align: center; color: var(--purple-text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  .agent-card { background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--border-inner); padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
+  .agent-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .agent-subtitle { font-size: 10px; font-weight: 600; color: var(--slate-muted); margin-bottom: 12px; text-transform: uppercase; }
+  
+  .ac-purple .agent-title { color: var(--purple-text); }
+  .ac-blue .agent-title { color: var(--blue-text); }
+  
+  .flow-step { font-size: 11.5px; line-height: 1.5; color: #334155; margin-bottom: 8px; display: flex; gap: 8px; align-items: flex-start; }
+  .flow-step:last-child { margin-bottom: 0; }
+  .step-num { background: var(--slate-dark); color: #FFFFFF; font-size: 9px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .ac-purple .step-num { background: var(--purple); }
+  .ac-blue .step-num { background: var(--blue); }
+  
+  .tool-pill { display: inline-block; background: #FFF7ED; border: 1px solid #FFEDD5; color: #C2410C; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-top: 2px; font-family: monospace; }
+  .endpoint-badge { display: inline-block; background: var(--slate-dark); color: #FFFFFF; font-family: monospace; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px; margin-top: 14px; }
+
+  /* Feature Modules & Pipelines */
+  .feature-box { border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; background: #FFFFFF; }
+  .fb-amber { border-left: 4px solid var(--amber); }
+  .fb-blue { border-left: 4px solid var(--blue); }
+  .fb-emerald { border-left: 4px solid var(--emerald); }
+  .fb-purple { border-left: 4px solid var(--purple); }
+  
+  .box-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: var(--slate-dark); }
+  .box-desc { font-size: 11px; color: var(--slate-muted); line-height: 1.4; margin-top: 10px; padding-left: 4px; border-left: 2px solid var(--border-color); }
+
+  /* Differentiator Segment Grid */
+  .diff-card { border: 1px solid var(--border-color); border-radius: var(--border-inner); padding: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 4px; }
+  .diff-num { font-size: 16px; font-weight: 800; color: var(--purple); }
+  .diff-text { font-size: 11.5px; font-weight: 600; color: var(--slate-dark); line-height: 1.4; }
+  .diff-sub { font-size: 10.5px; color: var(--slate-muted); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="main-header">
+    <div class="brand-title"><span>Dhanadurga</span> Architectural Blueprint</div>
+    <div class="brand-subtitle">AI-Powered HRMS Platform — Serverless · Multi-Tenant</div>
+  </header>
+
+  <div class="section-container">
+    <div class="section-heading">System Tech Stack</div>
+    <div class="row-4">
+      <div class="tech-card tc-purple">
+        <h4>Frontend Infrastructure</h4>
+        <p>React 18 + Vite · Tailwind CSS<br>Framer Motion · Recharts · Lucide Icons</p>
+      </div>
+      <div class="tech-card tc-blue">
+        <h4>Backend Core Engine</h4>
+        <p>FastAPI + Python Core<br>Mangum Adapter · AWS Lambda Serverless</p>
+      </div>
+      <div class="tech-card tc-amber">
+        <h4>Structured Data &amp; Storage</h4>
+        <p>MongoDB Atlas (Transactional DB)<br>ChromaDB Cloud (Vector Storage) · AWS S3</p>
+      </div>
+      <div class="tech-card tc-emerald">
+        <h4>Cognitive AI Subsystem</h4>
+        <p>Function Calling Native Engine<br>RAG Integration Flow · Advanced Vector Search</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-heading">Application Access Portals</div>
+    <div class="row-2">
+      <div class="portal-box">
+        <div class="portal-bar pb-admin">Administrative Control Panel</div>
+        <div class="portal-body">
+          <div class="portal-group">
+            <div class="group-title">Workforce Management Track</div>
+            <div class="badge-container">
+              <span class="badge">Executive Overview</span>
+              <span class="badge">Employees Directory</span>
+              <span class="badge">Leave Approval Dashboard</span>
+              <span class="badge">Item Procurement Loop</span>
+              <span class="badge">Holiday Calendar Manager</span>
+            </div>
+          </div>
+          <div class="portal-group">
+            <div class="group-title">Deep Analytics &amp; Operations</div>
+            <div class="badge-container">
+              <span class="badge">Recharts Reporting</span>
+              <span class="badge">Bulk Payroll Processing</span>
+              <span class="badge">Attendance Monitor</span>
+              <span class="badge">Document Archival</span>
+              <span class="badge">Template Studio</span>
+              <span class="badge">Finance Overviews</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="portal-box">
+        <div class="portal-bar pb-employee">Employee Workspace</div>
+        <div class="portal-body">
+          <div class="portal-group">
+            <div class="group-title">Daily Operations Grid</div>
+            <div class="badge-container">
+              <span class="badge">Biometric Clock-In</span>
+              <span class="badge">Attendance History</span>
+              <span class="badge">Leave Balance Triage</span>
+              <span class="badge">Equipment Requests</span>
+            </div>
+          </div>
+          <div class="portal-group">
+            <div class="group-title">Self Service &amp; Integration Hub</div>
+            <div class="badge-container">
+              <span class="badge">Salary &amp; Payslip Vault</span>
+              <span class="badge">Document Repository</span>
+              <span class="badge">Digital Signatures</span>
+              <span class="badge">AI Workspace Assistant</span>
+              <span class="badge">Wellness &amp; Engagement Tracks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-heading">Cognitive AI Orchestration Layer</div>
+    <div class="agent-block">
+      <div class="agent-header">Dual Autonomous Core Agents — Context-Aware Task Execution</div>
+      <div class="row-2">
+        <div class="agent-card ac-purple">
+          <div class="agent-title">HR Intelligence Analyst</div>
+          <div class="agent-subtitle">Admin Domain — RAG Pipeline Over Enterprise Knowledge Base</div>
+          
+          <div class="flow-step">
+            <span class="step-num">1</span>
+            <div>Administrator submits human resource analytical query inside conversational UI.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">2</span>
+            <div>System makes a structural <code>POST /api/admin/sync-all</code> call to vectorize new records inside ChromaDB.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">3</span>
+            <div>Advanced RAG pipeline crawls, handles context search, and isolates operational data blocks from ChromaDB.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">4</span>
+            <div>AI produces answers regarding attrition tracking, budget shifts, compensation patterns, and personnel trends.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">5</span>
+            <div>Admin can request official inline legal document generation (such as payslips or customized offer letters).</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">6</span>
+            <div>Rendered document gets cleanly written to secure AWS S3 buckets and emailed directly using Gmail SMTP.</div>
+          </div>
+          <div class="endpoint-badge">POST /api/admin/intelligence</div>
+        </div>
+
+        <div class="agent-card ac-blue">
+          <div class="agent-title">Employee Virtual Assistant</div>
+          <div class="agent-subtitle">Employee Domain — Action-Oriented Function Calling Engine</div>
+          
+          <div class="flow-step">
+            <span class="step-num">1</span>
+            <div>Employee issues an explicit system intent request (e.g., "Apply for vacation next Thursday and Friday").</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">2</span>
+            <div>AI parses conversational context and matches strings against local callable parameters.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">3</span>
+            <div><span class="tool-pill">apply_leave_tool</span> — Submits structural application records directly inside relational store.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">4</span>
+            <div><span class="tool-pill">withdraw_leave_tool</span> — Safely updates status flags to remove scheduled records.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">5</span>
+            <div><span class="tool-pill">request_item_tool</span> — Routes hardware procurement requests straight to approval channels.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">6</span>
+            <div><span class="tool-pill">get_my_status_tool</span> — Fetches tracking data on historical leaves and active tracking.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">7</span>
+            <div><span class="tool-pill">get_my_salary_tool</span> — Queries payment systems to map breakdowns and line-item deductions.</div>
+          </div>
+          <div class="flow-step">
+            <span class="step-num">8</span>
+            <div>System reports operational state change to the channel while dropping automated warning emails where needed.</div>
+          </div>
+          <div class="endpoint-badge">POST /api/employee/chat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-heading">Platform Service Modules</div>
+    <div class="row-3">
+      <div class="feature-box fb-amber">
+        <div class="box-title">Automated Document Generation</div>
+        <div class="badge-container">
+          <span class="badge">Jinja2 Blueprints</span>
+          <span class="badge">xhtml2pdf Processing</span>
+          <span class="badge">Payslip Renders</span>
+          <span class="badge">Contract Engine</span>
+        </div>
+        <div class="box-desc">AI Template Analyzer converts raw system parameters into formatted layouts for legal agreements.</div>
+      </div>
+
+      <div class="feature-box fb-blue">
+        <div class="box-title">Biometric Liveness Verification</div>
+        <div class="badge-container">
+          <span class="badge">MediaPipe FaceMesh</span>
+          <span class="badge">Blink Check Logic</span>
+          <span class="badge">Head-Turn Check</span>
+          <span class="badge">Camera Logs</span>
+        </div>
+        <div class="box-desc">Authenticates field workers on clock-in using dynamic facial mapping to completely halt image spoofing tricks.</div>
+      </div>
+
+      <div class="feature-box fb-emerald">
+        <div class="box-title">Rich Email Notifications</div>
+        <div class="badge-container">
+          <span class="badge">Gmail SMTP Secure</span>
+          <span class="badge">Instant Alerts</span>
+          <span class="badge">Inline Action Hooks</span>
+        </div>
+        <div class="box-desc">Fires sleek HTML notification templates containing fast single-click action buttons built for administrative personnel.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-heading">DevOps Deployment Pipelines</div>
+    <div class="row-4">
+      <div class="feature-box fb-purple">
+        <div class="box-title">Frontend Distribution</div>
+        <div class="badge-container">
+          <span class="badge">Git Push Monitored</span>
+          <span class="badge">Amplify Webhooks</span>
+          <span class="badge">Production Build Step</span>
+        </div>
+        <div class="box-desc">React 18 application is distributed worldwide via AWS Amplify Live on main branch push actions.</div>
+      </div>
+
+      <div class="feature-box fb-blue">
+        <div class="box-title">Serverless Backend Deploy</div>
+        <div class="badge-container">
+          <span class="badge">FastAPI Core</span>
+          <span class="badge">Docker Layering</span>
+          <span class="badge">AWS ECR Registry</span>
+          <span class="badge">Lambda Function</span>
+        </div>
+        <div class="box-desc">Uses Mangum encapsulation inside secure cloud containers, completely bypassing API Gateway overhead.</div>
+      </div>
+
+      <div class="feature-box fb-amber">
+        <div class="box-title">Data &amp; Vector Pipeline</div>
+        <div class="badge-container">
+          <span class="badge">MongoDB Sync Core</span>
+          <span class="badge">S3 File Storage</span>
+          <span class="badge">ChromaDB Vectors</span>
+        </div>
+        <div class="box-desc">Ensures real-time structural consistency between MongoDB relational schemas and AI agent knowledge vectors.</div>
+      </div>
+
+      <div class="feature-box fb-emerald">
+        <div class="box-title">Multi-Tenant Identity Context</div>
+        <div class="badge-container">
+          <span class="badge">RBAC Context Model</span>
+          <span class="badge">Company Domain Scopes</span>
+          <span class="badge">JWT Session Validation</span>
+        </div>
+        <div class="box-desc">Enforces absolute data isolation boundaries separating distinct organization layers across shared resources.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="section-heading">Architecture Pillars</div>
+    <div class="row-6">
+      <div class="diff-card">
+        <span class="diff-num">01</span>
+        <span class="diff-text">Anti-Spoofing</span>
+        <span class="diff-sub">Biometric blink checks prevent check-in fraud.</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-num">02</span>
+        <span class="diff-text">Dual AI Agents</span>
+        <span class="diff-sub">Dedicated analytical engine and operational tool.</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-num">03</span>
+        <span class="diff-text">Automated Docs</span>
+        <span class="diff-sub">Converts unstructured data into Jinja templates.</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-num">04</span>
+        <span class="diff-text">Zero Server Cost</span>
+        <span class="diff-sub">Built entirely on serverless cloud scaling.</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-num">05</span>
+        <span class="diff-text">Multi-Tenant Base</span>
+        <span class="diff-sub">Supports distinct organizations on a single deployment.</span>
+      </div>
+      <div class="diff-card">
+        <span class="diff-num">06</span>
+        <span class="diff-text">Secure S3 Vault</span>
+        <span class="diff-sub">Payslips and document archives generated straight to cloud storage.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

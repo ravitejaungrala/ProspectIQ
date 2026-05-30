@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database import connect_db, close_db
 from config import get_settings
-from routers import campaigns, leads, outreach, replies, dashboard, analytics, agents
+from routers import campaigns, leads, outreach, replies, dashboard, analytics, agents, chat
 
 settings = get_settings()
 
@@ -37,6 +37,7 @@ app.include_router(outreach.router)
 app.include_router(replies.router)
 app.include_router(analytics.router)
 app.include_router(agents.router)
+app.include_router(chat.router)
 
 
 @app.get("/api/health")

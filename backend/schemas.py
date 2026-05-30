@@ -164,3 +164,20 @@ class DashboardStats(BaseModel):
     open_rate: float = 0.0
     reply_rate: float = 0.0
     interest_rate: float = 0.0
+
+
+# --- Chat Assistant ---
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage] = []
+    context: dict = {}
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    context: dict = {}
+    data: dict = {}

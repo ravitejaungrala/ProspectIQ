@@ -106,3 +106,7 @@ export const getAgentLogs = (campaignId) =>
   request(`/agents/logs/campaign/${campaignId}`);
 export const getAllAgentLogs = () =>
   request('/agents/logs');
+
+// Chat Assistant
+export const sendChatMessage = (messages, context) =>
+  request('/chat', { method: 'POST', body: JSON.stringify({ messages, context }) });

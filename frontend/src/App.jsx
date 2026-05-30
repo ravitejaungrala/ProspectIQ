@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import Assistant from './pages/Assistant'
 import Dashboard from './pages/Dashboard'
 import Campaigns from './pages/Campaigns'
 import CampaignDetail from './pages/CampaignDetail'
@@ -13,7 +14,8 @@ export default function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Assistant />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/campaigns/:id" element={<CampaignDetail />} />
         <Route path="/leads/:campaignId" element={<Leads />} />

@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, Rocket, Users, Send, MessageSquare, Zap, BarChart3, Bot
+  LayoutDashboard, Rocket, Users, Send, MessageSquare, Zap, BarChart3, Bot, Sparkles
 } from 'lucide-react'
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/', icon: Sparkles, label: 'Assistant' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/campaigns', icon: Rocket, label: 'Campaigns' },
   { to: '/replies', icon: MessageSquare, label: 'Replies' },
   { to: '/analytics', icon: BarChart3, label: 'Analytics' },

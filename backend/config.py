@@ -5,7 +5,7 @@ from functools import lru_cache
 class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-pro"
-    hunter_api_key: str = ""
+    apollo_api_key: str = ""
     resend_api_key: str = ""
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
